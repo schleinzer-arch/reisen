@@ -4,14 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Unsere Reisen</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#B07A2E">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
 <style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('/fonts/fraunces-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Work Sans';
+    src: url('/fonts/work-sans-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     --paper: #F6F1E7;
     --ink: #26312B;
     --ink-soft: #5A6459;
+    --ink-faint: #8B9188;
     --ochre: #B07A2E;
     --line: rgba(38,49,43,0.12);
     --card: #FBF9F3;
@@ -25,7 +51,7 @@
     color: var(--ink);
     font-family: 'Work Sans', sans-serif;
     min-height: 100vh;
-    padding: 56px 24px 80px;
+    padding: 56px 24px 40px;
   }
 
   header {
@@ -44,7 +70,6 @@
 
   h1 {
     font-family: 'Fraunces', serif;
-    font-optical-sizing: auto;
     font-weight: 500;
     font-size: clamp(30px, 5vw, 46px);
     margin: 0;
@@ -62,19 +87,44 @@
   .card {
     position: relative;
     aspect-ratio: 1 / 1;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 20px;
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .card:hover {
+  .card.active:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 22px -12px rgba(38,49,43,0.28);
+  }
+
+  .card-map {
+    flex: 0 0 46%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-map svg { width: 100%; height: 100%; display: block; }
+
+  .card-body {
+    flex: 1;
+    padding: 14px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .card-type {
@@ -84,45 +134,102 @@
     text-transform: uppercase;
   }
 
+  .card-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
   .card-mid h2 {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-size: 22px;
-    margin: 0 0 4px;
+    font-size: 21px;
+    margin: 6px 0 2px;
     line-height: 1.15;
+    color: var(--ink);
   }
 
   .card-period {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
+    color: var(--ink-soft);
   }
 
   .card-desc {
     font-size: 13px;
     line-height: 1.5;
-    margin: 0;
+    color: var(--ink-soft);
+    margin: 6px 0 0;
   }
 
   /* Waldviertel - dusty lavender */
-  .card.waldviertel { background: #DCE3F0; }
-  .card.waldviertel .card-type,
-  .card.waldviertel .card-period,
-  .card.waldviertel .card-desc { color: #4C5E8C; }
-  .card.waldviertel h2 { color: #25304A; }
+  .card.waldviertel .card-map { background: #DCE3F0; }
+  .card.waldviertel .map-outline { stroke: #4C5E8C; }
+  .card.waldviertel .map-pin { fill: #33406b; }
+  .card.waldviertel .card-type { color: #4C5E8C; }
 
   /* Schneeberg & mehr - sage */
-  .card.schneeberg { background: #DCEEDD; }
-  .card.schneeberg .card-type,
-  .card.schneeberg .card-period,
-  .card.schneeberg .card-desc { color: #4F7D5C; }
-  .card.schneeberg h2 { color: #294530; }
+  .card.schneeberg .card-map { background: #DCEEDD; }
+  .card.schneeberg .map-outline { stroke: #4F7D5C; }
+  .card.schneeberg .map-pin { fill: #33553d; }
+  .card.schneeberg .card-type { color: #4F7D5C; }
 
   /* Tallinn - apricot */
-  .card.tallinn { background: #F4DAD2; }
-  .card.tallinn .card-type,
-  .card.tallinn .card-period,
-  .card.tallinn .card-desc { color: #A85A3E; }
-  .card.tallinn h2 { color: #5A2E1E; }
+  .card.tallinn .card-map { background: #F4DAD2; }
+  .card.tallinn .map-outline { stroke: #A85A3E; }
+  .card.tallinn .map-pin { fill: #7c3f2a; }
+  .card.tallinn .card-type { color: #A85A3E; }
+
+  .map-outline {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    opacity: 0.75;
+  }
+
+  .map-pin {
+    stroke: var(--card);
+    stroke-width: 2;
+  }
+
+  .card.next {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-style: dashed;
+    background: transparent;
+    color: var(--ink-faint);
+    gap: 6px;
+    cursor: default;
+  }
+
+  .card.next .plus {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+  }
+
+  .card.next span.label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  footer {
+    max-width: 920px;
+    margin: 56px auto 0;
+    text-align: center;
+  }
+
+  footer a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  footer a:hover { color: var(--ink-soft); }
 
   @media (prefers-reduced-motion: reduce) {
     .card { transition: none; }
@@ -138,56 +245,103 @@
 
 <div class="board" id="board"></div>
 
+<footer>
+  <a href="/impressum.html">Impressum &amp; Datenschutz</a>
+</footer>
+
 <script>
+  const AUSTRIA_D = "M0.094,117.343L2.266,112.64L2.644,109.746L0.755,107.994L0,107.522L0.661,107.117L3.305,107.454L5.005,106.443L5.949,105.498L8.31,106.443L11.709,108.264L13.409,109.476L14.07,110.419L14.448,111.227L14.259,112.573L15.014,113.111L16.619,113.313L17.753,113.716L17.375,115.53L17.28,117.008L18.791,116.806L20.68,115.665L22.191,113.649L23.041,111.631L23.796,106.848L23.985,106.443L25.118,106.848L29.745,106.578L31.917,107.522L35.411,107.657L35.316,108.398L35.977,109.611L37.488,111.295L38.244,112.371L39.849,112.573L42.304,111.968L43.72,111.362L44.287,111.766L46.553,111.362L48.536,110.015L49.008,108.937L51.086,108.196L53.73,106.51L57.507,105.228L69.783,103.81L70.255,102.729L70.066,100.294L70.444,99.956L71.955,100.565L74.504,101.106L76.393,101.985L77.62,103.134L78.754,103.134L80.548,102.391L82.908,101.85L85.175,102.999L85.836,104.283L85.458,104.958L85.458,105.97L86.213,106.78L88.008,108.196L90.368,109.409L91.596,109.274L91.974,108.129L92.446,105.363L92.635,102.391L92.068,100.7L90.84,100.294L89.33,100.159L88.48,99.82L88.763,98.872L89.991,96.433L89.991,93.244L87.252,89.506L84.891,85.965L84.891,84.738L86.308,82.623L88.48,80.915L93.296,78.112L94.901,77.565L96.789,77.086L99.622,75.922L101.039,74.688L101.889,73.454L103.211,66.654L103.588,66.379L103.966,65.966L108.876,68.305L109.348,67.961L110.198,67.548L111.804,65.759L112.087,64.451L112.087,61.831L112.276,59.416L112.559,58.656L113.314,58.932L115.392,60.175L117.092,61.625L118.697,65.208L122.38,66.103L127.007,66.241L128.706,64.657L130.217,64.244L131.917,64.726L135.505,65.277L135.977,62.452L138.055,59.416L138.999,58.38L141.643,58.449L142.304,56.237L142.871,50.002L143.437,49.308L145.42,49.447L147.309,50.557L147.875,51.528L148.914,51.389L150.236,50.765L151.747,50.418L154.202,51.042L159.396,53.884L162.04,54.922L163.739,54.714L165.25,54.784L171.388,59.14L175.637,59.761L179.509,59.761L180.737,58.449L182.436,57.343L184.136,57.481L185.647,58.034L188.574,59.968L189.896,60.451L191.69,60.728L193.012,61.142L194.24,64.451L194.901,65.346L194.712,65.759L194.618,67.204L193.579,69.129L192.54,71.533L192.54,73.729L195.373,81.189L197.923,85.692L198.395,87.396L200,88.689L198.395,90.39L198.111,92.836L197.167,93.923L196.884,95.28L197.262,96.569L197.262,98.195L197.828,100.362L195.373,100.835L192.54,100.768L191.501,100.903L190.463,101.512L189.518,101.174L186.874,99.143L185.364,98.669L184.325,98.805L183.569,99.685L182.153,100.835L180.925,101.647L181.209,102.391L186.686,104.215L187.63,107.05L186.591,109.342L186.213,110.487L184.891,111.362L183.381,112.169L181.492,112.371L181.303,113.582L181.964,117.209L181.398,118.014L180.831,119.154L181.398,122.169L182.531,122.37L182.814,123.039L182.625,124.244L182.342,125.514L181.964,126.917L181.775,127.518L181.02,127.852L178.565,127.652L176.487,128.853L172.332,132.987L170.822,133.719L169.216,135.383L169.311,139.038L169.122,139.37L168.744,140.1L163.739,138.839L163.551,138.839L160.246,139.304L157.979,141.029L155.146,141.958L149.292,141.427L143.626,142.09L142.304,142.554L140.793,142.886L139.471,143.814L138.621,145.204L137.299,146.925L135.222,148.314L133.05,149.371L132.578,150.23L131.822,150.692L130.595,150.032L129.651,150.098L128.423,149.635L124.457,149.173L120.019,148.38L117.941,147.586L115.581,146.991L113.031,146.462L110.67,146.33L109.537,146.131L104.06,144.807L100.378,144.675L95.562,144.145L86.119,142.09L83.286,141.295L80.642,141.029L77.526,140.299L75.165,139.171L73.56,136.979L71.955,134.052L69.027,130.254L68.366,128.319L69.311,126.65L70.255,125.447L70.161,124.845L69.405,124.578L64.117,126.249L59.018,128.319L57.035,128.386L55.146,127.919L52.597,127.852L50.047,128.386L45.137,128.72L42.21,130.188L40.415,133.186L39.377,135.582L38.527,136.314L36.827,136.58L34.183,136.38L32.389,135.715L30.595,133.652L27.668,133.386L25.024,133.32L24.363,132.92L24.457,131.654L23.418,129.12L21.624,128.319L17.186,133.053L15.958,133.453L12.37,132.187L9.254,130.188L8.971,128.72L8.404,127.451L5.76,126.316L2.55,125.581L1.511,125.581L1.889,124.845L2.266,123.642L1.983,122.705L1.228,121.701L0.85,120.629L0.755,119.557L0.472,118.752L0.378,117.947Z";
+  const ESTONIA_D = "M174.614,164.24L173.814,164.445L169.354,163.623L164.551,161.259L162.379,159.407L160.32,159.51L157.69,160.642L148.656,164.034L146.369,163.315L141.109,159.922L138.479,156.317L132.647,148.985L132.19,147.226L131.389,145.88L125.1,144.014L122.813,141.317L120.869,140.902L118.125,139.551L110.692,133.83L108.862,133.205L108.405,134.246L108.634,135.6L108.176,136.432L107.147,136.328L105.546,134.246L103.488,132.371L97.084,135.912L94.797,136.849L92.853,137.057L82.79,141.628L79.703,144.118L78.445,143.911L78.674,141.525L82.905,129.763L83.705,120.454L85.192,119.091L85.649,117.832L84.963,114.786L80.617,112.894L78.902,113.209L77.301,116.362L75.7,118.672L71.812,120.14L68.496,117.727L60.835,114.366L58.776,110.052L58.319,105.623L54.317,101.397L52.601,96.314L53.288,92.813L56.947,90.475L57.976,88.455L53.402,88.774L52.373,88.242L52.144,86.432L50.086,80.245L51.915,77.787L52.716,75.433L51.229,73.398L51.687,71.039L52.83,68.678L52.144,63.301L56.718,60.392L61.292,58.342L70.783,57.262L69.868,52.289L73.756,52.073L80.274,46.002L86.678,47.088L96.055,42.961L114.008,42.961L116.524,40.567L116.066,38.172L116.066,35.555L119.497,36.318L125.1,35.882L146.369,40.894L151.515,40.894L158.719,46.002L162.607,47.413L174.157,47.413L191.767,49.69L195.312,46.219L195.655,45.242L197.256,47.196L199.428,50.34L200,52.181L199.314,53.155L197.141,54.129L196.684,54.994L195.769,56.614L193.253,56.938L191.995,58.126L190.395,63.408L187.536,72.112L183.19,78.749L179.76,82.381L178.159,85.153L177.244,88.455L177.015,91.751L180.332,109.946L180.332,113.209L179.531,116.467L178.959,119.93L179.417,122.864L181.589,127.884L183.877,135.288L184.791,140.071L186.392,141.836L187.879,143.081L188.222,143.911L188.107,144.74L187.421,145.672L180.675,148.157L179.76,150.226L179.074,152.602L176.215,156.007L175.3,159.201L174.728,162.904ZM24.242,98.539L26.529,100.021L28.588,99.598L30.646,98.539L35.22,99.492L45.74,106.995L46.655,108.998L40.48,109.841L38.994,112.157L37.507,113.735L35.792,114.261L32.704,117.412L28.702,120.454L27.787,122.236L20.469,121.921L16.467,123.073L13.15,126.525L11.893,132.996L9.491,138.096L7.09,139.967L4.574,140.279L3.888,138.304L4.231,136.432L9.491,129.241L10.635,126.839L8.005,125.794L5.718,123.283L0.915,120.349L0,118.042L1.144,117.832L2.287,117.097L3.545,115.102L4.117,112.894L0.229,106.151L2.287,105.095L4.688,105.306L7.204,107.311L9.949,104.99L11.206,104.673L13.15,105.517L15.094,101.079L19.668,99.598L21.955,98.221ZM33.962,86.006L31.332,88.986L29.846,87.816L29.045,86.325L25.615,93.237L21.841,94.405L19.668,93.025L19.897,90.475L17.724,83.767L14.408,81.74L9.834,81.634L6.404,78.856L19.325,76.931L20.698,73.72L23.328,70.288L25.272,69.966L26.987,70.717L27.216,73.398L27.673,74.469L33.505,75.861L35.792,80.245L36.707,85.58ZM47.341,102.877L44.711,103.511L38.422,99.175L39.909,96.314L41.624,95.148L46.998,96.95L47.684,101.397Z";
+
   const trips = [
     {
       destination: "Waldviertel",
       slug: "waldviertel",
       type: "Kurztrip",
       start: "2026-07-10",
+      end: "2026-07-12",
       periodLabel: "10.–12. Juli 2026",
       description: "Geburtstagsüberraschung für Clemens",
-      url: "https://www.icloud.com/sharedalbum/de-de/#B24532ODW7HT7dh"
+      url: "https://www.icloud.com/sharedalbum/de-de/#B24532ODW7HT7dh",
+      mapPath: AUSTRIA_D,
+      pin: { x: 148.0, y: 64.6 }
     },
     {
       destination: "Schneeberg & mehr",
       slug: "schneeberg",
       type: "Kurztrip",
       start: "2026-08-28",
+      end: "2026-08-30",
       periodLabel: "28.–30. August 2026",
       description: "Geburtstagsüberraschung für Marcela",
-      url: "https://sonnenaufgang.schleinzer.app"
+      url: "https://sonnenaufgang.schleinzer.app",
+      mapPath: AUSTRIA_D,
+      pin: { x: 166.7, y: 98.2 }
     },
     {
       destination: "Tallinn",
       slug: "tallinn",
       type: "Städtereise",
       start: "2026-09-04",
+      end: "2026-09-06",
       periodLabel: "4.–6. September 2026",
       description: "Altstadt, Ostsee und das Baltikum",
-      url: "https://tallinn.schleinzer.app"
+      url: "https://tallinn.schleinzer.app",
+      mapPath: ESTONIA_D,
+      pin: { x: 92.1, y: 48.2 }
     }
   ];
 
+  function getStatus(trip) {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const start = new Date(trip.start);
+    const end = new Date(trip.end);
+    if (today >= start && today <= end) return "gerade unterwegs";
+    if (today < start) {
+      const days = Math.ceil((start - today) / 86400000);
+      if (days === 0) return "heute";
+      if (days === 1) return "morgen";
+      return "in " + days + " Tagen";
+    }
+    return "";
+  }
+
   const sorted = [...trips].sort((a, b) => new Date(a.start) - new Date(b.start));
-  const board = document.getElementById('board');
+  const board = document.getElementById("board");
 
   sorted.forEach(trip => {
-    const el = document.createElement('a');
+    const el = document.createElement("a");
     el.href = trip.url;
-    el.className = 'card ' + trip.slug;
+    el.className = "card active " + trip.slug;
 
     el.innerHTML = `
-      <span class="card-type">${trip.type}</span>
-      <div class="card-mid">
-        <h2>${trip.destination}</h2>
-        <span class="card-period">${trip.periodLabel}</span>
+      <div class="card-map" aria-hidden="true">
+        <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
+          <path class="map-outline" d="${trip.mapPath}"/>
+          <circle class="map-pin" cx="${trip.pin.x}" cy="${trip.pin.y}" r="6"/>
+        </svg>
       </div>
-      <p class="card-desc">${trip.description}</p>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-type">${trip.type}</span>
+          <span class="card-status">${getStatus(trip)}</span>
+        </div>
+        <div class="card-mid">
+          <h2>${trip.destination}</h2>
+          <span class="card-period">${trip.periodLabel}</span>
+        </div>
+        <p class="card-desc">${trip.description}</p>
+      </div>
     `;
 
     board.appendChild(el);
   });
+
+  const ghost = document.createElement("div");
+  ghost.className = "card next";
+  ghost.innerHTML = `<span class="plus">+</span><span class="label">Weitere Reisen folgen</span>`;
+  board.appendChild(ghost);
 </script>
 
 </body>
