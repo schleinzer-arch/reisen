@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsere Reisen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F1E7;
+    --ink: #26312B;
+    --ink-soft: #5A6459;
+    --ochre: #B07A2E;
+    --line: rgba(38,49,43,0.12);
+    --card: #FBF9F3;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    min-height: 100vh;
+    padding: 56px 24px 80px;
+  }
+
+  header {
+    max-width: 920px;
+    margin: 0 auto 48px;
+  }
+
+  .eyebrow-top {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: clamp(30px, 5vw, 46px);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .board {
+    max-width: 920px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 28px;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px -12px rgba(38,49,43,0.28);
+  }
+
+  .card-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card-mid h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 4px;
+    line-height: 1.15;
+  }
+
+  .card-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Waldviertel - dusty lavender */
+  .card.waldviertel { background: #DCE3F0; }
+  .card.waldviertel .card-type,
+  .card.waldviertel .card-period,
+  .card.waldviertel .card-desc { color: #4C5E8C; }
+  .card.waldviertel h2 { color: #25304A; }
+
+  /* Schneeberg & mehr - sage */
+  .card.schneeberg { background: #DCEEDD; }
+  .card.schneeberg .card-type,
+  .card.schneeberg .card-period,
+  .card.schneeberg .card-desc { color: #4F7D5C; }
+  .card.schneeberg h2 { color: #294530; }
+
+  /* Tallinn - apricot */
+  .card.tallinn { background: #F4DAD2; }
+  .card.tallinn .card-type,
+  .card.tallinn .card-period,
+  .card.tallinn .card-desc { color: #A85A3E; }
+  .card.tallinn h2 { color: #5A2E1E; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow-top">Reisejournal von Marcela und Clemens</div>
+  <h1>Unsere Reisen</h1>
+</header>
+
+<div class="board" id="board"></div>
+
+<script>
+  const trips = [
+    {
+      destination: "Waldviertel",
+      slug: "waldviertel",
+      type: "Kurztrip",
+      start: "2026-07-10",
+      periodLabel: "10.–12. Juli 2026",
+      description: "Geburtstagsüberraschung für Clemens",
+      url: "https://www.icloud.com/sharedalbum/de-de/#B24532ODW7HT7dh"
+    },
+    {
+      destination: "Schneeberg & mehr",
+      slug: "schneeberg",
+      type: "Kurztrip",
+      start: "2026-08-28",
+      periodLabel: "28.–30. August 2026",
+      description: "Geburtstagsüberraschung für Marcela",
+      url: "https://sonnenaufgang.schleinzer.app"
+    },
+    {
+      destination: "Tallinn",
+      slug: "tallinn",
+      type: "Städtereise",
+      start: "2026-09-04",
+      periodLabel: "4.–6. September 2026",
+      description: "Altstadt, Ostsee und das Baltikum",
+      url: "https://tallinn.schleinzer.app"
+    }
+  ];
+
+  const sorted = [...trips].sort((a, b) => new Date(a.start) - new Date(b.start));
+  const board = document.getElementById('board');
+
+  sorted.forEach(trip => {
+    const el = document.createElement('a');
+    el.href = trip.url;
+    el.className = 'card ' + trip.slug;
+
+    el.innerHTML = `
+      <span class="card-type">${trip.type}</span>
+      <div class="card-mid">
+        <h2>${trip.destination}</h2>
+        <span class="card-period">${trip.periodLabel}</span>
+      </div>
+      <p class="card-desc">${trip.description}</p>
+    `;
+
+    board.appendChild(el);
+  });
+</script>
+
+</body>
+</html>
