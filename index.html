@@ -40,7 +40,6 @@
     --ink-faint: #8B9188;
     --ochre: #B07A2E;
     --line: rgba(38,49,43,0.12);
-    --card: #FBF9F3;
   }
 
   * { box-sizing: border-box; }
@@ -87,13 +86,10 @@
   .card {
     position: relative;
     aspect-ratio: 1 / 1;
-    background: var(--card);
-    border: 1px solid var(--line);
     border-radius: 6px;
     text-decoration: none;
     color: inherit;
-    display: flex;
-    flex-direction: column;
+    display: block;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -103,18 +99,27 @@
     box-shadow: 0 10px 22px -12px rgba(38,49,43,0.28);
   }
 
-  .card-map {
-    flex: 0 0 46%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .card-map-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.22;
   }
 
-  .card-map svg { width: 100%; height: 100%; display: block; }
+  .card-map-bg svg { width: 100%; height: 100%; display: block; }
 
-  .card-body {
-    flex: 1;
-    padding: 14px 18px 16px;
+  .map-outline {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -143,8 +148,8 @@
   .card-mid h2 {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-size: 21px;
-    margin: 6px 0 2px;
+    font-size: 22px;
+    margin: 0 0 4px;
     line-height: 1.15;
     color: var(--ink);
   }
@@ -159,48 +164,38 @@
     font-size: 13px;
     line-height: 1.5;
     color: var(--ink-soft);
-    margin: 6px 0 0;
+    margin: 0;
   }
 
   /* Waldviertel - dusty lavender */
-  .card.waldviertel .card-map { background: #DCE3F0; }
+  .card.waldviertel { background: #DCE3F0; }
   .card.waldviertel .map-outline { stroke: #4C5E8C; }
   .card.waldviertel .map-pin { fill: #33406b; }
   .card.waldviertel .card-type { color: #4C5E8C; }
 
   /* Schneeberg & mehr - sage */
-  .card.schneeberg .card-map { background: #DCEEDD; }
+  .card.schneeberg { background: #DCEEDD; }
   .card.schneeberg .map-outline { stroke: #4F7D5C; }
   .card.schneeberg .map-pin { fill: #33553d; }
   .card.schneeberg .card-type { color: #4F7D5C; }
 
   /* Tallinn - apricot */
-  .card.tallinn .card-map { background: #F4DAD2; }
+  .card.tallinn { background: #F4DAD2; }
   .card.tallinn .map-outline { stroke: #A85A3E; }
   .card.tallinn .map-pin { fill: #7c3f2a; }
   .card.tallinn .card-type { color: #A85A3E; }
 
-  .map-outline {
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linejoin: round;
-    opacity: 0.75;
-  }
-
-  .map-pin {
-    stroke: var(--card);
-    stroke-width: 2;
-  }
-
   .card.next {
+    background: transparent;
+    border: 1.5px dashed var(--line);
+  }
+
+  .card.next .card-content {
     align-items: center;
     justify-content: center;
     text-align: center;
-    border-style: dashed;
-    background: transparent;
     color: var(--ink-faint);
     gap: 6px;
-    cursor: default;
   }
 
   .card.next .plus {
@@ -316,13 +311,13 @@
     el.className = "card active " + trip.slug;
 
     el.innerHTML = `
-      <div class="card-map" aria-hidden="true">
+      <div class="card-map-bg" aria-hidden="true">
         <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
           <path class="map-outline" d="${trip.mapPath}"/>
           <circle class="map-pin" cx="${trip.pin.x}" cy="${trip.pin.y}" r="6"/>
         </svg>
       </div>
-      <div class="card-body">
+      <div class="card-content">
         <div class="card-top">
           <span class="card-type">${trip.type}</span>
           <span class="card-status">${getStatus(trip)}</span>
@@ -340,7 +335,7 @@
 
   const ghost = document.createElement("div");
   ghost.className = "card next";
-  ghost.innerHTML = `<span class="plus">+</span><span class="label">Weitere Reisen folgen</span>`;
+  ghost.innerHTML = `<div class="card-content"><span class="plus">+</span><span class="label">Weitere Reisen folgen</span></div>`;
   board.appendChild(ghost);
 </script>
 
